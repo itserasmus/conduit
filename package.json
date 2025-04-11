@@ -1,7 +1,7 @@
 {
   "name": "npc-01",
   "version": "1.0.0",
-  "main": "index.js", // or your main file
+  "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
