@@ -1,3 +1,29 @@
+process.on('SIGINT', gracefulShutdown);
+process.on('SIGTERM', gracefulShutdown);
+
+function gracefulShutdown() {
+  console.log('Shutting down...');
+  exec('git add previous_users.txt', (err) => {
+    if (err) return console.error('Git add failed:', err);
+
+    exec('git commit -m "Update previous_users.txt on shutdown"', (err) => {
+      if (err) {
+        if (err.message.includes('nothing to commit')) {
+          console.log('No changes to commit.');
+          return;
+        }
+        return console.error('Git commit failed:', err);
+      }
+
+      exec('git push', (err) => {
+        if (err) return console.error('Git push failed:', err);
+        console.log('Changes pushed to GitHub!');
+      });
+    });
+  });
+  process.exit(0);
+}
+
 const express = require('express');
 const app = express();
 
