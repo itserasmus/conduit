@@ -71,7 +71,7 @@ client.on('guildMemberAdd', member => {
   const messagePool = isReturning ? returningMessages : freshWelcomeMessages;
 
 
-  channel.send(messagePool[Math.floor(Math.random() * messagePool.length)].replace('{user}', `<@${member.id}>`));
+  channel.send(messagePool[Math.floor(Math.random() * messagePool.length)].replace(/{user}/g, `<@${member.id}>`));
   if (!isReturning) {
     fs.appendFile(path, `${hashedId}\n`, err => {
       if (err) console.error('Failed to write user ID:', err);
@@ -85,7 +85,7 @@ client.on('guildMemberRemove', member => {
   const channel = member.guild.channels.cache.get("1360097532146876437"); // farewell
   if (!channel) return;
 
-  channel.send(farewellMessages[Math.floor(Math.random() * farewellMessages.length)].replace('{user}', `<@${member.id}>`));
+  channel.send(farewellMessages[Math.floor(Math.random() * farewellMessages.length)].replace(/{user}/g, `<@${member.id}>`));
 });
 
 client.login(process.env['TOKEN']);
