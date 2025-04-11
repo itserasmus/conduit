@@ -14,6 +14,7 @@ function hashUserId(userId) {
 const path = './previous_users.txt';
 
 let knownUsers = new Set();
+const recentlyWelcomed = new Set();
 
 try {
   const data = fs.readFileSync(path, 'utf8');
@@ -63,6 +64,10 @@ const farewellMessages = [
 ];
 
 client.on('guildMemberAdd', member => {
+  if (recentlyWelcomed.has(member.id)) return;
+  recentlyWelcomed.add(member.id);
+  setTimeout(() => recentlyWelcomed.delete(member.id), 10_000); // prevents two messages at once
+  
   const channel = member.guild.channels.cache.get("1359746247958728737"); // welcome
   if (!channel) return;
 
