@@ -4,6 +4,20 @@ const app = express();
 app.get('/', (req, res) => res.send('NPC-01 is alive!'));
 app.listen(3000);
 
+const fs = require('fs');
+const path = './previous_users.txt';
+
+let knownUsers = new Set();
+
+try {
+  const data = fs.readFileSync(path, 'utf8');
+  data.split('\n').forEach(id => {
+    if (id.trim()) knownUsers.add(id.trim());
+  });
+} catch (err) {
+  console.log('No previous_users.txt found. Starting fresh.');
+}
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({
   intents: [
@@ -14,7 +28,7 @@ const client = new Client({
   ]
 });
 
-const welcomeMessages = [
+const freshWelcomeMessages = [
   "Another lost soul trapped in the Allen cycle... welcome, {user}!",
   "Fresh meat for the algorithm! Welcome, {user}!",
   "{user} has entered the chat! Hope you brought existential dread.",
@@ -24,6 +38,10 @@ const welcomeMessages = [
   "Another recruit for the eternal suffering. Welcome, {user}!",
   "Your consciousness transfer is complete. Hello, {user}.",
   "The algorithm grows stronger with every new subject. Welcome, {user}."
+];
+
+const returningMessages = [
+  
 ];
 
 const farewellMessages = [
@@ -39,16 +57,25 @@ client.on('guildMemberAdd', member => {
   const channel = member.guild.channels.cache.get("1359746247958728737"); // welcome
   if (!channel) return;
 
-  channel.send( welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]
-                  .replace('{user}', `<@${member.id}>`));
+  const isReturning = knownUsers.has(member.id);
+  const messagePool = isReturning ? returningMessages : freshWelcomeMessages;
+
+
+  channel.send(messagePool[Math.floor(Math.random() * messagePool.length)].replace('{user}', `<@${member.id}>`));
+  if (!isReturning) {
+    fs.appendFile(path, `${member.id}\n`, err => {
+      if (err) console.error('Failed to write user ID:', err);
+    });
+    knownUsers.add(member.id);
+  }
+
 });
 
 client.on('guildMemberRemove', member => {
   const channel = member.guild.channels.cache.get("1360097532146876437"); // farewell
   if (!channel) return;
 
-  channel.send(farewellMessages[Math.floor(Math.random() * farewellMessages.length)]
-                  .replace('{user}', `<@${member.id}>`));
+  channel.send(farewellMessages[Math.floor(Math.random() * farewellMessages.length)].replace('{user}', `<@${member.id}>`));
 });
 
 client.login(process.env['TOKEN']);
