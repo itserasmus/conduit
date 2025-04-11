@@ -27,16 +27,12 @@ const welcomeMessages = [
   "The algorithm grows stronger with every new subject. Welcome, {user}."
 ];
 
-client.once('ready', () => {
-  console.log(`Logged in as ${client.user.tag}`);
-});
-
 client.on('guildMemberAdd', member => {
   const channel = member.guild.systemChannel;
   if (!channel) return;
 
   const message = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]
-                  .replace('{user}', `<@${member.id}`>);
+                  .replace('{user}', `<@${member.id}>`);
   channel.send(message);
 });
 
