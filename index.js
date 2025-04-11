@@ -28,7 +28,7 @@ const welcomeMessages = [
 ];
 
 client.once('ready', () => {
-  console.log(Logged in as ${client.user.tag});
+  console.log(`Logged in as ${client.user.tag}`);
 });
 
 client.on('guildMemberAdd', member => {
@@ -36,7 +36,7 @@ client.on('guildMemberAdd', member => {
   if (!channel) return;
 
   const message = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]
-                  .replace('{user}', <@${member.id}>);
+                  .replace('{user}', `<@${member.id}`>);
   channel.send(message);
 });
 
