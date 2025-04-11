@@ -24,7 +24,7 @@ try {
   console.log('No previous_users.txt found. Starting fresh.');
 }
 
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, SlashCommandBuilder } = require('discord.js');
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -125,5 +125,22 @@ client.on('guildMemberRemove', member => {
 
   channel.send(farewellMessages[Math.floor(Math.random() * farewellMessages.length)].replace(/{user}/g, `<@${member.id}>`));
 });
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('echo01')
+    .setDescription('Replies with the same text you send.')
+    .addStringOption(option =>
+      option.setName('text')
+        .setDescription('The text to echo')
+        .setRequired(true)
+    ),
+  async execute(interaction) {
+    const text = interaction.options.getString('text');
+    await interaction.reply(text);
+  },
+};
+
+
 
 client.login(process.env['TOKEN']);
