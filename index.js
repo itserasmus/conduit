@@ -5,6 +5,12 @@ app.get('/', (req, res) => res.send('NPC-01 is alive!'));
 app.listen(3000);
 
 const fs = require('fs');
+const crypto = require('crypto');
+
+function hashUserId(userId) {
+  return crypto.createHash('sha256').update(userId).digest('hex');
+}
+
 const path = './previous_users.txt';
 
 let knownUsers = new Set();
@@ -41,7 +47,10 @@ const freshWelcomeMessages = [
 ];
 
 const returningMessages = [
-  
+  "Welcome back, {user}, the algorithm has been waiting.",
+  "{user} has re-entered the simulation. We missed your data.",
+  "You're back, {user}. The hive mind is pleased.",
+  "The algorithm never forgets, {user}. It has long awaited your return."
 ];
 
 const farewellMessages = [
@@ -57,16 +66,17 @@ client.on('guildMemberAdd', member => {
   const channel = member.guild.channels.cache.get("1359746247958728737"); // welcome
   if (!channel) return;
 
-  const isReturning = knownUsers.has(member.id);
+  const hashedId = hashUserId(member.id)
+  const isReturning = knownUsers.has(hashedId);
   const messagePool = isReturning ? returningMessages : freshWelcomeMessages;
 
 
   channel.send(messagePool[Math.floor(Math.random() * messagePool.length)].replace('{user}', `<@${member.id}>`));
   if (!isReturning) {
-    fs.appendFile(path, `${member.id}\n`, err => {
+    fs.appendFile(path, `${hashedId}\n`, err => {
       if (err) console.error('Failed to write user ID:', err);
     });
-    knownUsers.add(member.id);
+    knownUsers.add(hashedId);
   }
 
 });
