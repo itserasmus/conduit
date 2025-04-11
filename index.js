@@ -20,20 +20,35 @@ const welcomeMessages = [
   "{user} has entered the chat! Hope you brought existential dread.",
   "Welcome, {user}! Remember, you're not alone in this endless loop.",
   "Welcome, {user}! The algorithm awaits your next move.",
-  "{user} fell through a glitch in reality and ended up here.",
   "Welcome, {user}! The algorithm is watching you.",
   "Another recruit for the eternal suffering. Welcome, {user}!",
   "Your consciousness transfer is complete. Hello, {user}.",
   "The algorithm grows stronger with every new subject. Welcome, {user}."
 ];
 
+const farewellMessages = [
+  "{user} has disconnected from the hive mind.",
+  "{user} has escaped the Allen cycle.",
+  "Master has given {user} a sock! {user} is free!",
+  "The algorithm notes your abscence, {user}.",
+  "Goodbye, {user}, the algorithm shall remember you.",
+  "One less subject. Farewell, {user}."
+];
+
 client.on('guildMemberAdd', member => {
-  const channel = member.guild.systemChannel;
+  const channel = member.guild.channels.cache.get("1359746247958728737"); // welcome
   if (!channel) return;
 
-  const message = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]
-                  .replace('{user}', `<@${member.id}>`);
-  channel.send(message);
+  channel.send( welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]
+                  .replace('{user}', `<@${member.id}>`));
+});
+
+client.on('guildMemberRemove', member => {
+  const channel = member.guild.channels.cache.get("1360097532146876437"); // farewell
+  if (!channel) return;
+
+  channel.send(farewellMessages[Math.floor(Math.random() * farewellMessages.length)]
+                  .replace('{user}', `<@${member.id}>`));
 });
 
 client.login(process.env['TOKEN']);
