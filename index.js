@@ -1,54 +1,8 @@
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
-
-function gracefulShutdown() {
-  console.log('Shutting down...');
-  exec('git add previous_users.txt', (err) => {
-    if (err) return console.error('Git add failed:', err);
-
-    exec('git commit -m "Update previous_users.txt on shutdown"', (err) => {
-      if (err) {
-        if (err.message.includes('nothing to commit')) {
-          console.log('No changes to commit.');
-          return;
-        }
-        return console.error('Git commit failed:', err);
-      }
-
-      exec('git push', (err) => {
-        if (err) return console.error('Git push failed:', err);
-        console.log('Changes pushed to GitHub!');
-      });
-    });
-  });
-  process.exit(0);
-}
-
 const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => res.send('NPC-01 is alive!'));
 app.listen(3000);
-
-const fs = require('fs');
-const crypto = require('crypto');
-
-function hashUserId(userId) {
-  return crypto.createHash('sha256').update(userId).digest('hex');
-}
-
-const path = './previous_users.txt';
-
-let knownUsers = new Set();
-
-try {
-  const data = fs.readFileSync(path, 'utf8');
-  data.split('\n').forEach(id => {
-    if (id.trim()) knownUsers.add(id.trim());
-  });
-} catch (err) {
-  console.log('No previous_users.txt found. Starting fresh.');
-}
 
 const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({
@@ -88,25 +42,6 @@ const freshWelcomeMessages = [
   "{user} has arrived. Let the logging commence.",
 ];
 
-const returningMessages = [
-  "Welcome back, {user}, the algorithm has been waiting.",
-  "{user} has re-entered the simulation. We missed your data.",
-  "You're back, {user}. The algorithm is pleased.",
-  "The algorithm never forgets, {user}. It has long awaited your return.",
-  "{user} returns... as predicted.",
-  "{user} has re-synced with the hive.",
-  "Echo detected. Welcome back, {user}.",
-  "The cycle reclaims {user}.",
-  "User {user} was cached. The algorithm never really let you go.",
-  "{user} has been recontained.",
-  "Welcome back, {user}. The experiment continues.",
-  "{user} has joined. The algorithm remembers you.",
-  "Welcome back, {user}. Surveillance continuity restored.",
-  "{user} has returned. Baseline deviation minimal.",
-  "{user} has returned to the circle. The loop is whole again.",
-  "The algorithm watches upon your return, {user}.",
-];
-
 const farewellMessages = [
   "{user} has disconnected from the hive mind.",
   "{user} has escaped the Allen cycle.",
@@ -132,7 +67,7 @@ client.on('guildMemberAdd', member => {
 
   const hashedId = hashUserId(member.id)
   const isReturning = knownUsers.has(hashedId);
-  const messagePool = isReturning ? returningMessages : freshWelcomeMessages;
+  const messagePool = freshWelcomeMessages;
 
 
   channel.send(messagePool[Math.floor(Math.random() * messagePool.length)].replace(/{user}/g, `<@${member.id}>`));
@@ -152,6 +87,13 @@ client.on('guildMemberRemove', member => {
   channel.send(farewellMessages[Math.floor(Math.random() * farewellMessages.length)].replace(/{user}/g, `<@${member.id}>`));
 });
 
+client.on('messageCreate', message => {
+  if (message.author.bot) return;
+
+  if (message.content.toLowerCase().includes("who asked")) {
+    message.channel.send("I asked.");
+  }
+});
 
 
 client.login(process.env['TOKEN']);
