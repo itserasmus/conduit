@@ -78,7 +78,7 @@ const farewellMessages = [
 
 const enpassantChain = new Map([
   ["google en passant", [[0.99, "holy hell!"], [0.01, "I accidentally stabbed myself so I'm not really in the mood for that right now"]]],
-  ["holy hell", [[1, "new response just dropped"]],
+  ["holy hell", [[1, "new response just dropped"]]],
   ["new response just dropped", [[0.99, "Actual zombie"], [0.01, "Stop saying \"New response just dropped?\" every time someone says something on this godforsaken sub, no, a new response did not drop, just an average mediocre statement that adds nothing more to a conversation, for the love of fucking god."]]],
    ["actual zombie", [[0.9, "Call the exorcist!"], [0.07, "brainless parrots"], [0.02, "???"], [0.01, "?? call the exorcist ??"]]],
    ["call the exorcist", [[0.7, "Knightmare fuel"], [0.1, "Quick, grab the popcorn!"], [0.1, "Ignite the chessboard!"], [0.1, "Holy bishops on skateboards!"]]],
