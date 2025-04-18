@@ -124,7 +124,7 @@ client.on('messageCreate', message => {
   }
 
   
-  if(response = enpassantChain.get(message.content.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim())) {
+  if(responseOptions = enpassantChain.get(message.content.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim())) {
     const response = getWeightedRandom(responseOptions);
     message.channel.send(response);
   }
