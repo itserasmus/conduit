@@ -4,6 +4,21 @@ const app = express();
 app.get('/', (req, res) => res.send('NPC-01 is alive!'));
 app.listen(3000);
 
+
+function getWeightedRandom(choices) {
+  const totalWeight = choices.reduce((acc, [weight]) => acc + weight, 0);
+  const random = Math.random() * totalWeight;
+
+  let cumulativeWeight = 0;
+  for (const [weight, value] of choices) {
+    cumulativeWeight += weight;
+    if (random <= cumulativeWeight) {
+      return value;
+    }
+  }
+  return choices[choices.length - 1][1];
+}
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({
   intents: [
@@ -107,6 +122,13 @@ client.on('messageCreate', message => {
   if (message.content.toLowerCase().includes("who asked")) {
     message.channel.send("I asked.");
   }
+
+  
+  if(response = enpassantChain.get(message.content.toLowerCase()toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim())) {
+    const response = getWeightedRandom(responseOptions);
+    message.channel.send(response);
+  }
+
 });
 
 
