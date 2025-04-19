@@ -94,8 +94,6 @@ client.on('guildMemberAdd', member => {
   const channel = member.guild.channels.cache.get("1359746247958728737"); // welcome
   if (!channel) return;
 
-  const hashedId = hashUserId(member.id)
-  const isReturning = knownUsers.has(hashedId);
   const messagePool = freshWelcomeMessages;
 
 
