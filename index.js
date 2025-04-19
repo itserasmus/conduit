@@ -129,5 +129,13 @@ client.on('messageCreate', message => {
 
 });
 
+client.on('ready', () => {
+  const guild = client.guilds.cache.get(process.env['SERVER_ID']);
+  if (guild) {
+    const botMember = guild.members.me;
+    botMember.setNickname("Conduit").catch(console.error);
+  }
+});
+
 
 client.login(process.env['TOKEN']);
